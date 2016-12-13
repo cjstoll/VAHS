@@ -1,0 +1,102 @@
+<form method="POST" action="">
+<div id="content" class="container">
+<div id="rptControls" class="wrapper" >
+	<div class="row">
+		<div class="col-sm-2">Docket Range</div>
+		<div class="col-sm-2">Hearing Type</div>
+		<div class="col-sm-4">Resource Type</div>
+		<div class="col-sm-4">&nbsp;</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-2 vertical-top"><%= text_field_tag('docdate',params[:docdate],class: 'rptInput') %></div>
+		<div class="col-sm-2 vertical-top"><%= select_tag('hType',options_for_select([["[Select Below]", "0"],["Central Office (CO)", "1"], ["Travel Board (TB)", "2"], ["Video Hearing (VH)", "6"]],params[:hType])) %></div>
+		<div class="col-sm-4 vertical-top"><%= select_tag('rsType',options_for_select([["[Select Below]", "0"],["Veterans Service Organizations (VSO)", "VSO"], ["Veteran Law Judges (VLJ)", "VLJ"]],params[:rsType])) %></div>
+		<div class="col-sm-2 vertical-top"><%= button_tag('View Results', type: 'submit', class: 'rptButton', name: 'ViewResults', id:'btnView') %></div>
+		<div class="col-sm-2 vertical-top"><%= button_tag('Export Results', type: 'submit', class: 'rptButton', name:'ExportResults', id:'btnExport') %></div>
+	</div>
+	<div class="row">
+		<div class="col-sm-2 vertical-top" style="margin-left:5px">YYYY-MM</div>
+		<div class="col-sm-3"></div>
+		<div class="col-sm-3"></div>
+		<div class="col-sm-4">&nbsp;</div>
+	</div>
+</div>
+</form>
+<div id="rptResults" class="wrapper" style="background-color:white;" >
+	<% if @json.present? %>
+	
+	<table class="table table-condensed" style="margin: 0 auto;line-height:0px;">
+		<thead class="thead-inverse">
+		<tr>
+			<th>Regional Office</th>
+			<th>Type</th>
+			<th>Pending</th>
+			<th>Percentage</th>
+			<th>Pre-FY2000</th>
+			<th>FY01-05</th>
+			<th>FY06-10</th>
+			<th>FY11-15</th>
+			<th>FY16</th>
+			<th>FY17</th>
+		</tr>
+		</thead>
+		<tbody>
+		<% @json.each do |h,v| %>
+		<tr>
+			<% @siteTTl = v.map(&:to_i).reduce(0, :+) %>
+			<td><%= h %></td>
+			<td><%= @shType %></td>
+			<td><%= @siteTTl  %></td>
+			<td><%= ((@siteTTl.to_f / @ttlPending.to_f)*100).round(1) %>%</td>
+			<td><%= v[0]%></td>
+			<td><%= v[1]%></td>
+			<td><%= v[2]%></td>
+			<td><%= v[3]%></td>
+			<td><%= v[4]%></td>
+			<td><%= v[5]%></td>
+		</tr>
+		<% end %>
+		</tbody>
+	</table>
+	<% end %>
+</div> 
+<% if @exportXLS.present? %>
+<iframe id="exportData" style="display:none"></iframe>
+<%= javascript_tag do %>
+
+	var exportRecs = JSON.parse('<%=raw j @exportXLS.to_json %>');
+	var shType = '<%= j @shType.to_s %>'
+	var expTbl = $('<table></table>');
+	expTbl.append("<tr><th>RO</th><th>Type</th><th>Pending</th><th>Pre-FY2000</th><th>FY01-05</th><th>FY06-10</th><th>FY11-15</th><th>FY16</th><th>FY17</th></tr>");
+	
+	var waitLoop = function(){
+		var d = $.Deferred();
+		
+		for(j = 0 ; j < exportRecs.length ; j++){
+			var tr = $('<tr/>')
+			tr.append("<td>" + exportRecs[j]["BFREGOFF"] +"</td>");
+			tr.append("<td>" + shType + "</td>");
+			tr.append("<td>" + exportRecs[j]["BFKEY"] +"</td>");
+			tr.append("<td>0</td>");
+			tr.append("<td>0</td>");
+			tr.append("<td>0</td>");
+			tr.append("<td>0</td>");
+			tr.append("<td>0</td>");
+			tr.append("<td>0</td>");
+			expTbl.append(tr);
+		}
+		d.resolve();
+		return d.promise();
+	};
+	
+	$.when(waitLoop()).then(function(){
+		expTbl.table2excel({
+			name: "ExportReport",
+			filename: "ExportReport"
+		});
+	});
+
+	console.log(exportRecs);	
+<% end %>
+<% end %>
+</div>
