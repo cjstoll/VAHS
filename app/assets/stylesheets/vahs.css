@@ -79,7 +79,7 @@ a {
 	line-height:36px;
 }
 #rptControls{
-	font-size: 14px;
+	font-size: 13x;
 	line-height: 36px;
 	background: transparent;
 }
@@ -134,4 +134,20 @@ a {
 	color: #ffff00;
 	background-color:#01133F;
 }
-
+.error{
+	line-height: 20px;
+	text-align: center;
+	vertical-align: top;
+	box-sizing:border-box;
+	border-width:1px;
+	border-style:solid;
+	border-color:#f00;
+	border-radius:5px;
+	-webkit-box-shadow:none;
+	box-shadow:none;
+	font-family:'Arial Bold', 'Arial Regular', 'Arial';
+	font-weight:400;
+	font-style:normal;
+	font-size:14px;
+	color:#f00;
+}

@@ -23,18 +23,20 @@ class ReportsController < ApplicationController
 	
     @result = Vacols::Brieff.do_work(@docdate, @hType, @rsType)
 	@output = Hash.new {|h, k| h[k] = [0,0,0,0,0,0]}
-
-	@result.each do |i|
-		@output[i["BFREGOFF"]][i.fiscal_year] +=1
-		@ttlPending +=1
-	end 
-	
-	if params[:ViewResults]
-		@json = JSON.parse(@output.to_json)
-	else
-		@exportXLS = JSON.parse(@output.to_json)
+	begin
+		@result.each do |i|
+			@output[i["BFREGOFF"]][i.fiscal_year] +=1
+			@ttlPending +=1
+		end 
+		
+		if params[:ViewResults]
+			@json = JSON.parse(@output.to_json)
+		else
+			@exportXLS = JSON.parse(@output.to_json)
+		end
+	rescue
+		@err = true
 	end
-
 	render :home
   end
 end
