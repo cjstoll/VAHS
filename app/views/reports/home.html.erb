@@ -41,7 +41,7 @@
 		</tr>
 		</thead>
 		<tbody>
-		<% @json.each do |h,v| %>
+		<% @json.sort_by{|h,v| v[6]}.reverse.each do |h,v| %>
 		<tr>
 			<% @siteTTl = v.map(&:to_i).reduce(0, :+) %>
 			<td><%= h %></td>
