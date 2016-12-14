@@ -21,11 +21,6 @@ class ReportsController < ApplicationController
   		@shType = "Video"
   	end
 	
-<<<<<<< HEAD
-=======
-    @result = Vacols::Brieff.do_work(@docdate, @hType, @rsType)
-	@output = Hash.new {|h, k| h[k] = [0,0,0,0,0,0,0]}
->>>>>>> origin/master
 	begin
 		@result = Vacols::Brieff.do_work(@docdate, @hType, @rsType)
 		@output = Hash.new {|h, k| h[k] = [0,0,0,0,0,0,0]}
