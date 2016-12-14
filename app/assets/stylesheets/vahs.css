@@ -151,3 +151,9 @@ a {
 	font-size:14px;
 	color:#f00;
 }
+.cntrAlign {
+	text-align: center;
+}
+.rghtAlign {
+	text-align: right;
+}

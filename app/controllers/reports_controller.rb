@@ -21,11 +21,12 @@ class ReportsController < ApplicationController
   		@shType = "Video"
   	end
 	
-    @result = Vacols::Brieff.do_work(@docdate, @hType, @rsType)
-	@output = Hash.new {|h, k| h[k] = [0,0,0,0,0,0]}
 	begin
+		@result = Vacols::Brieff.do_work(@docdate, @hType, @rsType)
+		@output = Hash.new {|h, k| h[k] = [0,0,0,0,0,0,0]}
 		@result.each do |i|
 			@output[i["BFREGOFF"]][i.fiscal_year] +=1
+			@output[i["BFREGOFF"]][6] += 1
 			@ttlPending +=1
 		end 
 		
