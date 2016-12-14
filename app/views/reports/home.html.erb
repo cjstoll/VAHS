@@ -43,11 +43,10 @@
 		<tbody>
 		<% @json.sort_by{|h,v| v[6]}.reverse.each do |h,v| %>
 		<tr>
-			<% @siteTTl = v.map(&:to_i).reduce(0, :+) %>
 			<td><%= h %></td>
 			<td><%= @shType %></td>
-			<td><%= @siteTTl  %></td>
-			<td><%= ((@siteTTl.to_f / @ttlPending.to_f)*100).round(1) %>%</td>
+			<td><%= v[6]  %></td>
+			<td><%= ((v[6].to_f / @ttlPending.to_f)*100).round(1) %>%</td>
 			<td><%= v[0]%></td>
 			<td><%= v[1]%></td>
 			<td><%= v[2]%></td>

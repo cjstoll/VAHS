@@ -1,20 +1,54 @@
 class Vacols::Brieff < Vacols::Record
   self.table_name = "BRIEFF"
   
+  def self.form_completed
+    where.not(:BFD19 => nil)
+  end
+
+  def self.check_action
+    where("BFHA = 3 OR BFHA IS NULL")
+  end
+
+  def self.is_advanced
+    where(:BFMPRO => 'ADV')
+  end
+
+  def self.is_remanded
+    where(:BFMPRO => 'REM')
+  end
+
   def self.limit_docdate(docdate)
   	where("BFD19 < ?", docdate)
   end
 
+  def self.new_tb_request
+    where("BFDTB > BFDDEC")
+  end
+
+  def self.tb_request
+    where.not(:BFDTB => nil)
+  end
+
+  def self.check_pending2
+    is_remanded.tb_request.new_tb_request
+  end
+
+  #needs to also check the commented line but cannot get the OR working correctly
+  def self.check_pending(docdate)
+    #a = is_remanded.tb_request.new_tb_request.limit_docdate(docdate)
+    form_completed.check_action.is_advanced.limit_docdate(docdate)
+  end
+
   def self.travel_board(docdate)
-  	limit_docdate(docdate).where(:BFHR => 2)
+  	check_pending(docdate).where(:BFHR => 2)
   end
 
   def self.central_office(docdate)
-  limit_docdate(docdate).where(:BFHR => 1, :BFDOCIND => 'N')
+    check_pending(docdate).where(:BFHR => 1, :BFDOCIND => 'N')
   end
 
   def self.video(docdate)
-  	limit_docdate(docdate).where(:BFHR => 1,:BFDOCIND => 'Y')
+  	check_pending(docdate).where(:BFHR => 1,:BFDOCIND => 'Y')
   end
 
 
