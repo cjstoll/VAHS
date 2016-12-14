@@ -22,22 +22,12 @@
 		</div>
 	</div>
 </form>
-<div id="rptResults" class="wrapper" style="background-color:white;" >
-	<% if @json.present? %>
-	
+<div id="rptResults" class="wrapper" style="background-color:#fff;" >
+<% if @json.present? %>
 	<table class="table table-condensed" style="margin: 0 auto;line-height:0px;">
 		<thead class="thead-inverse">
 		<tr>
-			<th>Regional Office</th>
-			<th>Type</th>
-			<th>Pending</th>
-			<th>Percentage</th>
-			<th>Pre-FY2000</th>
-			<th>FY01-05</th>
-			<th>FY06-10</th>
-			<th>FY11-15</th>
-			<th>FY16</th>
-			<th>FY17</th>
+			<th>Regional Office</th><th>Type</th><th>Pending</th><th>Percentage</th><th>Pre-FY2000</th><th>FY01-05</th><th>FY06-10</th><th>FY11-15</th><th>FY16</th><th>FY17</th>
 		</tr>
 		</thead>
 		<tbody>
@@ -45,6 +35,7 @@
 		<tr>
 			<td><%= h %></td>
 			<td><%= @shType %></td>
+<<<<<<< HEAD
 			<td><%= v[6]  %></td>
 			<td><%= ((v[6].to_f / @ttlPending.to_f)*100).round(1) %>%</td>
 			<td><%= v[0]%></td>
@@ -53,6 +44,16 @@
 			<td><%= v[3]%></td>
 			<td><%= v[4]%></td>
 			<td><%= v[5]%></td>
+=======
+			<td class='rghtAlign'><%= v[6]  %></td>
+			<td class='rghtAlign'><%= ((v[6].to_f / @ttlPending.to_f)*100).round(1) %>%</td>
+			<td class='cntrAlign'><%= v[0] %></td>
+			<td class='cntrAlign'><%= v[1] %></td>
+			<td class='cntrAlign'><%= v[2] %></td>
+			<td class='cntrAlign'><%= v[3] %></td>
+			<td class='cntrAlign'><%= v[4] %></td>
+			<td class='cntrAlign'><%= v[5] %></td>
+>>>>>>> refs/remotes/origin/master
 		</tr>
 		<% end %>
 		</tbody>
@@ -79,11 +80,11 @@
 	var processResults = function(){
 		var d = $.Deferred();
 		$.each(exportRecs, function(i,v){
-			sum = 0;
-			$.each(v,function(){sum+=parseFloat(this) || 0;});
+			//sum = 0;
+			//$.each(v,function(){sum+=parseFloat(this) || 0;});
 			var obj = {
 				ro: i,
-				p: sum,
+				p: v[6],
 				v: v
 			}
 			tblData.push(obj);
@@ -104,7 +105,7 @@
 			tr.append("<td>" + shType + "</td>");
 			tr.append("<td>" + tblData[j].p +"</td>");
 			tr.append("<td>"+ ((tblData[j].p / ttlPending)*100).toFixed(1) +"%</td>");
-			for(i=0; i<tblData[j].v.length; i++){
+			for(i=0; i<(tblData[j].v.length-1); i++){
 				tr.append("<td>" + tblData[j].v[i] +"</td>");
 			}
 			expTbl.append(tr);
@@ -119,6 +120,6 @@
 <% end %>
 <% end %>
 <% if @err.present? %>
-	<div class='error'><b>Error Occurred</b><p>An error has occurred and your request could not be processed.<br/>Please valid all fields contain appropriate information and try again.</p></div>
+	<div class='error'><b>Error Occurred</b><p>An error has occurred and your request could not be processed.<br/>Please validate all fields contain appropriate information and try again.</p></div>
 <% end %>
 </div>
