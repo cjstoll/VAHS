@@ -27,34 +27,33 @@
 	<table class="table table-condensed" style="margin: 0 auto;line-height:0px;">
 		<thead class="thead-inverse">
 		<tr>
-			<th>Regional Office</th><th>Type</th><th>Pending</th><th>Pending(DD)</th><th>Percentage</th><th>Pre-FY2000</th><th>FY01-05</th><th>FY06-10</th><th>FY11-15</th><th>FY16</th><th>FY17</th>
+			<th>Regional Office</th><th>Type</th><th>Pending</th><th>Percentage</th><th>Pre-FY2000</th><th>FY01-05</th><th>FY06-10</th><th>FY11-15</th><th>FY16</th><th>FY17</th>
 		</tr>
 		</thead>
 		<tbody>
 		<% @ttls = Array.new(7,0)
-		   @json.sort_by{|h,v| v["ttlPenDate"][0]}.reverse.each do |h,v|
+		   @json.sort_by{|h,v| v[6]}.reverse.each do |h,v|
 		%>
 			<tr>
 				<td><%= h %></td>
 				<td><%= @shType %></td>
-				<td class='rghtAlign'><%= v["ttlPen"][0] %></td>
-				<td class='rghtAlign'><%= v["ttlPenDate"][0]  %></td>
-				<td class='rghtAlign'><%= ((v["ttlPenDate"][0].to_f / @ttlPending.to_f)*100).round(1) %>%</td>
-				<td class='cntrAlign'><%= v["fsclYear"][0] %></td>
-				<td class='cntrAlign'><%= v["fsclYear"][1] %></td>
-				<td class='cntrAlign'><%= v["fsclYear"][2] %></td>
-				<td class='cntrAlign'><%= v["fsclYear"][3] %></td>
-				<td class='cntrAlign'><%= v["fsclYear"][4] %></td>
-				<td class='cntrAlign'><%= v["fsclYear"][5] %></td>
+				<td class='rghtAlign'><%= v[6]  %></td>
+				<td class='rghtAlign'><%= ((v[6].to_f / @ttlPending.to_f)*100).round(1) %>%</td>
+				<td class='cntrAlign'><%= v[0] %></td>
+				<td class='cntrAlign'><%= v[1] %></td>
+				<td class='cntrAlign'><%= v[2] %></td>
+				<td class='cntrAlign'><%= v[3] %></td>
+				<td class='cntrAlign'><%= v[4] %></td>
+				<td class='cntrAlign'><%= v[5] %></td>
 			</tr>
 		<%
-			@ttls[0] += v["fsclYear"][0]
-			@ttls[1] += v["fsclYear"][1]
-			@ttls[2] += v["fsclYear"][2]
-			@ttls[3] += v["fsclYear"][3]
-			@ttls[4] += v["fsclYear"][4]
-			@ttls[5] += v["fsclYear"][5]
-			@ttls[6] += v["ttlPenDate"][0]
+			@ttls[0] += v[0]
+			@ttls[1] += v[1]
+			@ttls[2] += v[2]
+			@ttls[3] += v[3]
+			@ttls[4] += v[4]
+			@ttls[5] += v[5]
+			@ttls[6] += v[6]
 		end %>
 			<tr class='rptTotals'>
 				<td></td>
