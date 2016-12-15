@@ -12,31 +12,26 @@ class Vacols::Brieff < Vacols::Record
 
   #This is not a great way to do this but the OR was causing issues.
   #Also am unsure how to check vacols.hearing_held_postrem(bfkey, bfddec) <> 'Y'
-  def self.check_pending
+  def self.check_pending(docdate)
     where("((`BRIEFF`.`BFD19` IS NOT NULL AND `BRIEFF`.`BFMPRO` = "\
-     "'ADV' AND (`BRIEFF`.`BFHA` = 3 OR `BRIEFF`.`BFHA` IS NULL)"\
-      ") OR (`BRIEFF`.`BFMPRO` = 'REM'"\
+     "'ADV' AND (`BRIEFF`.`BFHA` = 3 OR `BRIEFF`.`BFHA` IS NULL) AND"\
+      "`BRIEFF`.`BFD19` < '"+ docdate +"') OR (`BRIEFF`.`BFMPRO` = 'REM'"\
       " AND `BRIEFF`.`BFDTB` IS NOT NULL AND BFDTB > BFDDEC))")
     #is_remanded.tb_request.new_tb_request.limit_docdate(docdate)
     #form_completed.check_action.is_advanced.limit_docdate(docdate)
     #where{(form_completed.check_action.is_advanced.limit_docdate(docdate)) | (is_remanded.tb_request.new_tb_request.docdate(docdate))}
   end
 
-  def self.travel_board
-    check_pending.where(:BFHR => 2)
+  def self.travel_board(docdate)
+    check_pending(docdate).where(:BFHR => 2)
   end
 
-  def self.central_office
-    check_pending.where(:BFHR => 1, :BFDOCIND => 'N')
+  def self.central_office(docdate)
+    check_pending(docdate).where(:BFHR => 1, :BFDOCIND => 'N')
   end
 
-  def self.video
-    check_pending.where(:BFHR => 1,:BFDOCIND => 'Y')
-  end
-
-#need to change these to date functions probably
-  def in_docdate(docdate)
-    self.BFD19.to_s <= docdate
+  def self.video(docdate)
+    check_pending(docdate).where(:BFHR => 1,:BFDOCIND => 'Y')
   end
 
 
@@ -65,17 +60,17 @@ class Vacols::Brieff < Vacols::Record
   end 
 
 
-  def self.do_work(hType, rsType)
+  def self.do_work(docdate, hType, rsType)
   begin
     case hType
     when "1"
-      central_office
+      central_office(docdate)
     when "2"
-      travel_board
+      travel_board(docdate)
     when "6"
-      video
+      video(docdate)
     when 0
-      limit_docdate
+      limit_docdate(docdate)
     else
       puts "error"
     end
