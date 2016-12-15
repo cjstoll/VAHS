@@ -15,7 +15,7 @@ class Vacols::Brieff < Vacols::Record
   def self.check_pending(docdate)
     where("((`BRIEFF`.`BFD19` IS NOT NULL AND `BRIEFF`.`BFMPRO` = "\
      "'ADV' AND (`BRIEFF`.`BFHA` = 3 OR `BRIEFF`.`BFHA` IS NULL) AND"\
-      "`BRIEFF`.`BFD19` < '2013-02-01') OR (`BRIEFF`.`BFMPRO` = 'REM'"\
+      "`BRIEFF`.`BFD19` < '"+ docdate +"') OR (`BRIEFF`.`BFMPRO` = 'REM'"\
       " AND `BRIEFF`.`BFDTB` IS NOT NULL AND BFDTB > BFDDEC))")
     #is_remanded.tb_request.new_tb_request.limit_docdate(docdate)
     #form_completed.check_action.is_advanced.limit_docdate(docdate)

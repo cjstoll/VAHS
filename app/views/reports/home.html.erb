@@ -31,20 +31,42 @@
 		</tr>
 		</thead>
 		<tbody>
-		<% @json.sort_by{|h,v| v[6]}.reverse.each do |h,v| %>
-		<tr>
-			<td><%= h %></td>
-			<td><%= @shType %></td>
-			<td class='rghtAlign'><%= v[6]  %></td>
-			<td class='rghtAlign'><%= ((v[6].to_f / @ttlPending.to_f)*100).round(1) %>%</td>
-			<td class='cntrAlign'><%= v[0] %></td>
-			<td class='cntrAlign'><%= v[1] %></td>
-			<td class='cntrAlign'><%= v[2] %></td>
-			<td class='cntrAlign'><%= v[3] %></td>
-			<td class='cntrAlign'><%= v[4] %></td>
-			<td class='cntrAlign'><%= v[5] %></td>
-		</tr>
-		<% end %>
+		<% @ttls = Array.new(7,0)
+		   @json.sort_by{|h,v| v[6]}.reverse.each do |h,v|
+		%>
+			<tr>
+				<td><%= h %></td>
+				<td><%= @shType %></td>
+				<td class='rghtAlign'><%= v[6]  %></td>
+				<td class='rghtAlign'><%= ((v[6].to_f / @ttlPending.to_f)*100).round(1) %>%</td>
+				<td class='cntrAlign'><%= v[0] %></td>
+				<td class='cntrAlign'><%= v[1] %></td>
+				<td class='cntrAlign'><%= v[2] %></td>
+				<td class='cntrAlign'><%= v[3] %></td>
+				<td class='cntrAlign'><%= v[4] %></td>
+				<td class='cntrAlign'><%= v[5] %></td>
+			</tr>
+		<%
+			@ttls[0] += v[0]
+			@ttls[1] += v[1]
+			@ttls[2] += v[2]
+			@ttls[3] += v[3]
+			@ttls[4] += v[4]
+			@ttls[5] += v[5]
+			@ttls[6] += v[6]
+		end %>
+			<tr class='rptTotals'>
+				<td></td>
+				<td>Totals</td>
+				<td class='rghtAlign'><%= @ttls[6]  %></td>
+				<td class='rghtAlign'></td>
+				<td class='cntrAlign'><%= @ttls[0] %></td>
+				<td class='cntrAlign'><%= @ttls[1] %></td>
+				<td class='cntrAlign'><%= @ttls[2] %></td>
+				<td class='cntrAlign'><%= @ttls[3] %></td>
+				<td class='cntrAlign'><%= @ttls[4] %></td>
+				<td class='cntrAlign'><%= @ttls[5] %></td>
+			</tr>
 		</tbody>
 	</table>
 	<% end %>
@@ -65,6 +87,7 @@
 	var shType = '<%= j @shType.to_s %>'
 	var ttlPending = '<%= j @ttlPending.to_s %>'
 	var tblData = [];
+	var tblTotals = [0,0,0,0,0,0,0];
 
 	var processResults = function(){
 		var d = $.Deferred();
@@ -92,13 +115,27 @@
 			var tr = $('<tr/>')
 			tr.append("<td>" + tblData[j].ro +"</td>");
 			tr.append("<td>" + shType + "</td>");
+			
 			tr.append("<td>" + tblData[j].p +"</td>");
+			tblTotals[6] += tblData[j].p;
+			
 			tr.append("<td>"+ ((tblData[j].p / ttlPending)*100).toFixed(1) +"%</td>");
 			for(i=0; i<(tblData[j].v.length-1); i++){
 				tr.append("<td>" + tblData[j].v[i] +"</td>");
+				tblTotals[i] += tblData[j].v[i];
 			}
 			expTbl.append(tr);
 		}
+	}).then(function(){
+		var tr = $('<tr class="rptTotals"/>')
+		tr.append("<td></td>");
+		tr.append("<td>Totals</td>");
+		tr.append("<td>" + tblTotals[6] +"</td>");
+		tr.append("<td></td>");
+		for(i=0; i<(tblTotals.length-1); i++){
+			tr.append("<td>" + tblTotals[i] +"</td>");
+		}
+		expTbl.append(tr);
 	}).then(function(){
 		expTbl.table2excel({
 			name: "ExportReport",
