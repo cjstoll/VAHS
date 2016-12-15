@@ -34,8 +34,8 @@ class ReportsController < ApplicationController
 			@output[i["BFREGOFF"]]["ttlPen"][0] += 1
 			if(i.in_docdate(@docdate))
 				@output[i["BFREGOFF"]]["ttlPenDate"][0] += 1
+				@ttlPending +=1
 			end
-			@ttlPending +=1
 		end 
 		if params[:ViewResults]
 			@json = JSON.parse(@output.to_json)
