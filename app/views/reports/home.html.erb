@@ -31,7 +31,7 @@
 		</tr>
 		</thead>
 		<tbody>
-		<% @ttls = Array.new(7,0)
+		<% @ttls = Array.new(8,0)
 		   @json.sort_by{|h,v| v["ttlPenDate"][0]}.reverse.each do |h,v|
 		%>
 			<tr>
@@ -55,10 +55,12 @@
 			@ttls[4] += v["fsclYear"][4]
 			@ttls[5] += v["fsclYear"][5]
 			@ttls[6] += v["ttlPenDate"][0]
+			@ttls[7] += v["ttlPen"][0]
 		end %>
 			<tr class='rptTotals'>
 				<td></td>
 				<td>Totals</td>
+				<td class='rghtAlign'><%= @ttls[7]  %></td>
 				<td class='rghtAlign'><%= @ttls[6]  %></td>
 				<td class='rghtAlign'></td>
 				<td class='cntrAlign'><%= @ttls[0] %></td>

@@ -34,9 +34,9 @@ class Vacols::Brieff < Vacols::Record
     check_pending.where(:BFHR => 1,:BFDOCIND => 'Y')
   end
 
-#need to change these to date functions probably
+#runs from the first so need to add one month
   def in_docdate(docdate)
-    self.BFD19.to_s <= docdate
+    self.BFD19 <= Date.parse(docdate) + 1.month
   end
 
 
