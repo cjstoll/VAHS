@@ -20,28 +20,13 @@ class ReportsController < ApplicationController
   	when "6"
   		@shType = "Video"
   	end
-	
-#is it faster to loop through @result twice or to add a check to each value in result
-#but only loop through once?
 
-	begin
-		@result = Vacols::Brieff.do_work(@hType, @rsType)
-		#@output = Hash.new {|h, k| h[k] = {:fsclYear =>[0,0,0,0,0,0,0], :ttlPenDate => {0}, :ttlPen =>{0}}
-		#@output2 = Hash.new(fsclYear = (Hash.new([0,0,0,0,0])), (ttlPenDate = 0), (ttlePen = 0))
-		@output = Hash.new{|h, k| h[k] = Hash.new{|hh, kk| hh[kk] = [0,0,0,0,0,0]}}
-		@result.each do |i|
-			@output[i["BFREGOFF"]]["fsclYear"][i.fiscal_year] +=1
-			@output[i["BFREGOFF"]]["ttlPen"][0] += 1
-			if(i.in_docdate(@docdate))
-				@output[i["BFREGOFF"]]["ttlPenDate"][0] += 1
-				@ttlPending +=1
-			end
-		end 
-		if params[:ViewResults]
+	@output, @ttlPending = Vacols::Brieff.get_report(@docdate, @hType, @rsType)
+
+	if params[:ViewResults]
 			@json = JSON.parse(@output.to_json)
-		else
-			@exportXLS = JSON.parse(@output.to_json)
-		end
+	else
+		@exportXLS = JSON.parse(@output.to_json)
 	end
 	render :home
   end
