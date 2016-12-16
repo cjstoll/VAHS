@@ -7,16 +7,22 @@ class Vacols::Brieff::BrieffReport
 	end
 
 	def get_pending_results
-		ttlPending = 0
-		output = Hash.new{|h, k| h[k] = Hash.new{|hh, kk| hh[kk] = [0,0,0,0,0,0]}}
+		ttlbfDocDate = 0
+		output = Hash.new {|h, k| h[k] = {
+			'fyCol' => [0,0,0,0,0,0],
+			'ttlPending' => 0,
+			'bfDocDate' => 0
+		}}
+
 		result.each do |i|
-			output[i.get_regional_office]["fsclYear"][i.fiscal_year] +=1
-			output[i.get_regional_office]["ttlPen"][0] += 1
+			output[i.get_regional_office]['fyCol'][i.fiscal_year] +=1
+			output[i.get_regional_office]['ttlPending'] += 1  #Total Pending regardless of DocDate
 			if(i.in_docdate(docdate))
-				output[i.get_regional_office]["ttlPenDate"][0] += 1
-				ttlPending +=1
+				output[i.get_regional_office]['bfDocDate'] += 1
+				ttlbfDocDate +=1
 			end
-		end
-		return output, ttlPending
+		end 
+
+		return output, ttlbfDocDate
 	end
 end
