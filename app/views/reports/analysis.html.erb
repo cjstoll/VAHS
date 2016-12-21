@@ -1,6 +1,154 @@
+<%= javascript_include_tag 'analysis' %>
 <div id="content" class="container">
 <form method="POST" action="analysis">
-		Analysis Page
-		<%= button_tag('Submit', type: 'submit', class: 'rptButton', name: 'Submit', id:'btnSubmit') %>
+	<div id="rptControls" class="wrapper" >
+		<div class="row">
+			<div class="col-sm-2"><%= label_tag('docdate','Docket Range', alt:'Docket Range') %></div>
+			<div class="col-sm-2"><%= label_tag('hType','Hearing Type', alt:'Hearing Type') %></div>
+			<div class="col-sm-2"><%= label_tag('numJudge','# of Judges', alt:'Number of Judges') %></div>
+			<div class="col-sm-2"><%= label_tag('judgeMult','Hearings Per Month', alt:'Hearings Per Month') %></div>
+			<div class="col-sm-4"><%= label_tag('coDays','CO Judge Days', alt:'CO Judge Days') %></div>
+		</div>
+		<div class="row">
+			<div class="col-sm-2 vertical-top"><%= text_field_tag('docdate',params[:docdate],class: 'rptInput', alt:'Docket Range Date') %></div>
+			<div class="col-sm-2 vertical-top"><%= select_tag('hType',options_for_select([["[Select Below]", "0"],["Central Office (CO)", "1"], ["Travel Board (TB)", "2"], ["Video Hearing (VH)", "6"]],params[:hType]), alt:'Select Hearing Type') %></div>
+			<div class="col-sm-2 vertical-top"><%= text_field_tag('numJudge', params[:numJudge], class: 'rptInput', alt:'Number of Judges') %></div>
+			<div class="col-sm-2 vertical-top"><%= text_field_tag('judgeMult', params[:judgeMult], class: 'rptInput', alt:'Hearings Per Month') %></div>
+			<div class="col-sm-2 vertical-top"><%= text_field_tag('coDays', params[:coDays], class: 'rptInput', alt:'CO Judge Days') %></div>
+			<div class="col-sm-2"></div>
+		</div>
+		<div class="row">
+			<div class="col-sm-8 vertical-top" style="margin-left:5px">YYYY-MM</div>
+			<div class="col-sm-10"></div>
+		</div>
+		<div class="row">
+			<div class="col-sm-8"></div>
+			<div class="col-sm-2 vertical-top"><%= button_tag('View Results', type: 'submit', class: 'rptButton', name: 'ViewResults', id:'btnView', alt:'Click to Submit and View Results') %></div>
+			<div class="col-sm-2 vertical-top"><%= button_tag('Export Results', type: 'submit', class: 'rptButton', name:'ExportResults', id:'btnExport', alt:'Click to Export Results') %></div>
+		</div>
+	</div>
 </form>
+<div id="rptResults" class="wrapper" style="background-color:#fff;" >
+<% if @json.present? %>
+	<br/><b><%= @shType %> Analysis</b><br/>
+	<table class="table table-condensed" style="margin: 0 auto;line-height:0px">
+		<thead class="thead-inverse">
+			<tr>
+				<th>Regional<br/>Office</th><th class='cntrAlign'>Total<br/>Pending</th><th class='cntrAlign'>Pending<br/>(Pre <%= params[:docdate] %> )</th><th class='cntrAlign'>Percentage</th><th class='cntrAlign'>Judge Days Added</th><th class='cntrAlign'>Total Hearings Added</th><th class='cntrAlign'>Hearings Per Day<br/>(Based on TimeZone)</th>
+			</tr>
+		</thead>
+		<tbody>
+		<% @json.sort_by{|roName,obj| obj["bfDocDate"]}.reverse.each do |roName,obj| 
+			@recDays = (((obj["bfDocDate"].to_f / @ttlbfDocDate.to_f))*@judgeDays.to_f).round(2)
+			@ttls["ttlJudgeDays"] += @recDays
+		%>
+			<tr>
+				<td><%= roName %></td>
+				<td class='rghtAlign'><%= obj["ttlPending"]  %></td>
+				<td class='rghtAlign'><%= obj["bfDocDate"]  %></td>
+				<td class='rghtAlign'><%= ((obj["bfDocDate"].to_f / @ttlbfDocDate.to_f)*100).round(2) %>%</td>
+				<td class='cntrAlign'><%= @recDays.round(0) %></td>
+				<td class='cntrAlign'></td>
+				<td class='cntrAlign'></td>
+			</tr>
+		<% end %>
+			<tr class='rptTotals'>
+				<td>Totals</td>
+				<td class='rghtAlign'><%= @ttls["ttlPending"] %></td>
+				<td class='rghtAlign'><%= @ttls["bfDocDate"] %></td>
+				<td class='rghtAlign'></td>
+				<td class='cntrAlign'><%= @ttls["ttlJudgeDays"].round(0) %></td>
+				<td class='cntrAlign'></td>
+				<td class='cntrAlign'></td>
+			</tr>
+		</tbody>
+	</table>
+	<% end %>
+</div> 
+<% if @exportXLS.present? %>
+<iframe id="exportData" style="display:none"></iframe>
+<%= javascript_tag do %>
+	//This function allows us to sort an array that is containing objects by using the object's key names
+	function sort_by(field, reverse, primer){
+	   var key = function (x) {return primer ? primer(x[field]) : x[field]};
+	   return function (a,b) {
+		  var A = key(a), B = key(b);
+		  return ( (A < B) ? -1 : ((A > B) ? 1 : 0) ) * [-1,1][+!!reverse];                  
+	   }
+	}
+
+	var exportRecs = JSON.parse('<%=raw j @exportXLS.to_json %>');
+	
+	var shType = '<%= j @shType.to_s %>'
+	var ttlPending = '<%= j @ttlbfDocDate.to_s %>'
+	var tblData = [];
+	var tblTotals = {
+		ttlPending: 0,
+		bfDocDate: 0,
+		fyCol: [0,0,0,0,0,0]
+	
+	};
+
+	var processResults = function(){
+		var d = $.Deferred();
+		$.each(exportRecs, function(name,data){
+			var obj = {
+				roName: name,
+				ttlPending: data.ttlPending,
+				bfDocDate: data.bfDocDate,
+				fyCol: data.fyCol
+			}
+			tblData.push(obj);
+		});
+		d.resolve();
+		return d.promise();
+	};
+	
+	var expTbl = $('<table></table>');
+	$.when(processResults()).then(function(){
+		tblData.sort(sort_by('bfDocDate', false, parseInt))
+	}).then(function(){
+		expTbl.append("<tr><th>Regional Office</th><th>Total Pending</th><th>Pending (Pre " + $('#docdate').val() + " )</th><th>Percentage</th><th>Judge Days Added</th><th>Total Hearings Added</th><th>Hearings Per Day (Based on TimeZone)</th></tr>");
+	}).then(function(){
+		for(j = 0 ; j < tblData.length ; j++){
+			var tr = $('<tr/>')
+			tr.append("<td>" + tblData[j].roName +"</td>");
+			
+			tr.append("<td>" + tblData[j].ttlPending +"</td>");
+			tblTotals.ttlPending += tblData[j].ttlPending;
+
+			tr.append("<td>" + tblData[j].bfDocDate +"</td>");
+			tblTotals.bfDocDate += tblData[j].bfDocDate;
+			
+			tr.append("<td>"+ ((tblData[j].bfDocDate / ttlPending)*100).toFixed(1) +"%</td>");
+
+			tr.append("<td>" + 0 +"</td>");
+			tr.append("<td>" + 0 +"</td>");
+			tr.append("<td>" + 0 +"</td>");
+
+			expTbl.append(tr);
+		}
+	}).then(function(){
+		var tr = $('<tr class="rptTotals"/>')
+		tr.append("<td>Totals</td>");
+		tr.append("<td>" + tblTotals.ttlPending +"</td>");
+		tr.append("<td>" + tblTotals.bfDocDate +"</td>");
+		tr.append("<td></td>");
+
+		tr.append("<td>" + 0 +"</td>");
+		tr.append("<td>" + 0 +"</td>");
+		tr.append("<td>" + 0 +"</td>");
+
+		expTbl.append(tr);
+	}).then(function(){
+		expTbl.table2excel({
+			name: "ExportReport",
+			filename: "ExportReport"
+		});
+	});
+<% end %>
+<% end %>
+<% if @err.present? %>
+	<div class='error'><b>Error Occurred</b><p>An error has occurred and your request could not be processed.<br/>Please validate all fields contain appropriate information and try again.</p></div>
+<% end %>
 </div>
