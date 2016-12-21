@@ -1,6 +1,33 @@
 <div id="content" class="container">
 <form method="POST" action="analysis">
-		Analysis Page
-		<%= button_tag('Submit', type: 'submit', class: 'rptButton', name: 'Submit', id:'btnSubmit') %>
+		<div id="content" class="container">
+			<form method="POST" action="docket">
+				<div id="rptControls" class="wrapper" >
+					<div class="row">
+						<div class="col-sm-2">Number of Judges</div>
+						<div class="col-sm-2">Hearings Per Month</div>
+						<div class="col-sm-2">CO Judge Days</div>
+						<div class="col-sm-4">&nbsp;</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-2 vertical-top"><%= text_field_tag('numJudge',
+							params[:numJudge],class: 'rptInput') %></div>
+						<div class="col-sm-2 vertical-top"><%= text_field_tag('judgeMult',params[:judgeMult],class: 'rptInput') %></div>
+						<div class="col-sm-2 vertical-top"><%= text_field_tag('coDays',
+							params[:coDays],class: 'rptInput') %></div>
+						<div class="col-sm-2 vertical-top"><%= button_tag('Submit', type: 'submit', class: 'rptButton', name: 'Submit', id:'btnSubmit') %></div>
+					</div>
+					<div class="row">
+						<div class="col-sm-2"></div>
+						<div class="col-sm-3"></div>
+						<div class="col-sm-3"></div>
+						<div class="col-sm-4">&nbsp;</div>
+					</div>
+					<% if flash[:notice] %>
+    					<div class="notice"><%= flash[:notice] %></div>
+  					<% end %>
+				</div>
+			</form>
+		</div>
 </form>
 </div>
