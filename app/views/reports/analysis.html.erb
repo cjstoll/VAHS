@@ -48,8 +48,8 @@
 				<td class='rghtAlign'><%= obj["bfDocDate"]  %></td>
 				<td class='rghtAlign'><%= ((obj["bfDocDate"].to_f / @ttlbfDocDate.to_f)*100).round(2) %>%</td>
 				<td class='cntrAlign'><%= @recDays.round(0) %></td>
-				<td class='cntrAlign'></td>
-				<td class='cntrAlign'></td>
+				<td class='cntrAlign'><%= @recDays.round(0) * obj["tzValue"]  %></td>
+				<td class='cntrAlign'><%= obj["tzValue"]  %></td>
 			</tr>
 		<% end %>
 			<tr class='rptTotals'>

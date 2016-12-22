@@ -29,8 +29,9 @@ class Vacols::Brieff < Vacols::Record
     self.BFD19 <= Date.parse(docdate) + 1.month
   end
 
+#added lstrip to clear any whitespace at front.  issue with test db made this necessary
   def get_regional_office()
-    self.BFREGOFF
+    self.BFREGOFF.to_s.lstrip
   end
 
 

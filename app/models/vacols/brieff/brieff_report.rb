@@ -11,7 +11,8 @@ class Vacols::Brieff::BrieffReport
 		output = Hash.new {|h, k| h[k] = {
 			'fyCol' => [0,0,0,0,0,0],
 			'ttlPending' => 0,
-			'bfDocDate' => 0
+			'bfDocDate' => 0,
+			'tzValue' => 0
 		}}
 
 		result.each do |i|
@@ -21,6 +22,8 @@ class Vacols::Brieff::BrieffReport
 				output[i.get_regional_office]['bfDocDate'] += 1
 				ttlbfDocDate +=1
 			end
+			output[i.get_regional_office]['tzValue'] = Vacols::RegionalOffice.tzValue(i.get_regional_office)
+			#output[i.get_regional_office]['tzValue'] = Vacols::RegionalOffice.VHTZ[Vacols::RegionalOffice.CITIES.find {|k, h| h[:city] == i.get_regional_office}[1][:timezone]]
 		end 
 
 		return output, ttlbfDocDate
