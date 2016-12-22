@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   post 'docket', to: 'reports#getDocket'
   post 'analysis', to: 'reports#getAnalysis'
 
+  
   root "base#index"
   
 end

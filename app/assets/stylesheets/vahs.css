@@ -109,6 +109,14 @@ label{
 #rptResults thead th {
 	padding-bottom:3px;
 }
+.rptResultsHeader{
+	margin-top:15px;
+	font-size:28px;
+	font-weight: bold;
+	line-height:36px;
+	text-align:center;
+	width:100%
+}
 .vertical-top {
 	display: inline-block;
     vertical-align: top;
@@ -167,6 +175,7 @@ label{
 }
 
 .error{
+	margin-top: 20px;
 	line-height: 20px;
 	text-align: center;
 	vertical-align: top;
