@@ -10,8 +10,9 @@ class Vacols::Brieff < Vacols::Record
   scope :tb_request, -> {where.not(:BFDTB => nil)}
 
   scope :travel_board, -> {check_pending.where(:BFHR => 2)}
-  scope :central_office, -> {check_pending.where(:BFHR => 1, :BFDOCIND => 'N')}
-  scope :video, -> {check_pending.where(:BFHR => 1,:BFDOCIND => 'Y')}
+  scope :central_office2, ->{check_pending.where(:BFHR => 1)}
+  scope :central_office, -> {central_office2.where(:BFDOCIND => nil)}
+  scope :video, -> {check_pending.where(:BFHR => 1,:BFDOCIND => 'V')}
 
   #This is not a great way to do this but the OR was causing issues.
   #Also am unsure how to check vacols.hearing_held_postrem(bfkey, bfddec) <> 'Y'
