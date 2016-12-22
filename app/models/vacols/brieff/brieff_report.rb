@@ -12,17 +12,20 @@ class Vacols::Brieff::BrieffReport
 			'fyCol' => [0,0,0,0,0,0],
 			'ttlPending' => 0,
 			'bfDocDate' => 0,
-			'tzValue' => 0
+			'tzValue' => 0,
+			'ro' => {},
+			'staID' => 0
 		}}
 
 		result.each do |i|
-			output[i.get_regional_office]['fyCol'][i.fiscal_year] +=1
-			output[i.get_regional_office]['ttlPending'] += 1  #Total Pending regardless of DocDate
+			roID = i.get_regional_office
+			output[roID]['fyCol'][i.fiscal_year] +=1
+			output[roID]['ttlPending'] += 1  #Total Pending regardless of DocDate
 			if(i.in_docdate(docdate))
-				output[i.get_regional_office]['bfDocDate'] += 1
+				output[roID]['bfDocDate'] += 1
 				ttlbfDocDate +=1
 			end
-			output[i.get_regional_office]['tzValue'] = Vacols::RegionalOffice.tzValue(i.get_regional_office)
+			output[roID]['staID'], output[roID]['ro'] , output[roID]['tzValue'] = Vacols::RegionalOffice.roInfo(roID)
 			#output[i.get_regional_office]['tzValue'] = Vacols::RegionalOffice.VHTZ[Vacols::RegionalOffice.CITIES.find {|k, h| h[:city] == i.get_regional_office}[1][:timezone]]
 		end 
 

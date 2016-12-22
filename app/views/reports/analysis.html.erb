@@ -43,7 +43,7 @@
 			@ttls["ttlJudgeDays"] += @recDays
 		%>
 			<tr>
-				<td><%= roName %></td>
+				<td><%= obj['staID'] + " - " + obj['ro']['city'] %></td>
 				<td class='rghtAlign'><%= obj["ttlPending"]  %></td>
 				<td class='rghtAlign'><%= obj["bfDocDate"]  %></td>
 				<td class='rghtAlign'><%= ((obj["bfDocDate"].to_f / @ttlbfDocDate.to_f)*100).round(2) %>%</td>

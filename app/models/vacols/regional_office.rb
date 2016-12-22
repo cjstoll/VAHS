@@ -171,10 +171,18 @@ class Vacols::RegionalOffice
   }.freeze
     ROS = CITIES.keys.freeze
 
+    # def self.cssNumber(ro)
+    #     STATIONS.key(CITIES.find {|k,h| h[:city] == ro}[0])
+    # end
 
-    #returns the number of video hearings for this RO based on timezone
-    def self.tzValue(ro)
-        VHTZ[CITIES.find {|k, h| h[:city] == ro}[1][:timezone]]
+    # #returns the number of video hearings for this RO based on timezone
+    # def self.tzValue(ro)
+    #     VHTZ[CITIES.find {|k, h| h[:city] == ro}[1][:timezone]]
+    # end
+
+    def self.roInfo(ro)
+        return STATIONS.find{|k,v| [v].flatten.include?(ro)}.first, CITIES[ro], VHTZ[CITIES[ro][:timezone]]
+        #STATIONS.find{|k, h| h[].contains?(ro)}
     end
 
 end
