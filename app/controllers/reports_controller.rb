@@ -80,7 +80,7 @@ class ReportsController < ApplicationController
 	
 	case @hType
 		when "1"
-			@judgeDays = 0
+			@judgeDays = @coDays.to_i - 3 #need to look into this minus 3
 		when "2"
 			@judgeDays = 0
 		when "6"
